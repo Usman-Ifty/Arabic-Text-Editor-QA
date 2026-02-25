@@ -7,26 +7,35 @@ import dto.Pages;
 
 public class PaginationDAO {
 
-	
-	static List<Pages> paginate(String fileContent){
-		int pageSize = 100;
+	static List<Pages> paginate(String fileContent) {
+		int wordsPerPage = 100;
 		int pageNumber = 1;
-		String pageContent = "";
 		List<Pages> pages = new ArrayList<Pages>();
-		if(fileContent==null || fileContent.isEmpty())
-		{
-			pages.add(new Pages(0, 0, pageNumber, pageContent.toString()));
+
+		if (fileContent == null || fileContent.trim().isEmpty()) {
+			pages.add(new Pages(0, 0, pageNumber, "")); // Fixed: return empty page if content is null/empty
 			return pages;
 		}
-		for(int i = 0; i < fileContent.length(); i++)
-		{
-			pageContent += fileContent.charAt(i);
-			if (pageContent.length() == pageSize || i == fileContent.length() - 1){
-				pages.add(new Pages(0, 0, pageNumber, pageContent));
+
+		String[] allWords = fileContent.split("\\s+");
+		StringBuilder currentPageContent = new StringBuilder();
+		int currentWordCount = 0;
+
+		for (int i = 0; i < allWords.length; i++) {
+			if (currentWordCount > 0) {
+				currentPageContent.append(" ");
+			}
+			currentPageContent.append(allWords[i]);
+			currentWordCount++;
+
+			if (currentWordCount == wordsPerPage || i == allWords.length - 1) {
+				pages.add(new Pages(0, 0, pageNumber, currentPageContent.toString()));
 				pageNumber++;
-				pageContent = "";
+				currentPageContent = new StringBuilder();
+				currentWordCount = 0;
 			}
 		}
+
 		return pages;
-	} 
+	}
 }
