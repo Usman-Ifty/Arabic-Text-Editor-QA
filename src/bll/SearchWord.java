@@ -46,4 +46,18 @@ public class SearchWord {
 		return getFiles;
 	}
 
+	public static boolean replaceWord(String target, String replacement, List<Documents> docs) {
+		boolean anyReplaced = false;
+		for (Documents doc : docs) {
+			for (Pages page : doc.getPages()) {
+				String content = page.getPageContent();
+				if (content.contains(target)) {
+					page.setPageContent(content.replace(target, replacement));
+					anyReplaced = true;
+				}
+			}
+		}
+		return anyReplaced;
+	}
+
 }
